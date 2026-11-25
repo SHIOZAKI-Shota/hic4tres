@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>hic4tres デモ</title>
+  <link rel="stylesheet" href="./shared.css">
+  <style>
+    html body { margin: 16px; }
+    .tres { width: 800px; height: 500px; }
+  </style>
+</head>
+<body>
+  <h1>hic4tres デモ</h1>
+  <p>Chrome / Chromium 157以降（HTML-in-Canvas対応）で開いてください。<a href="https://github.com/SHIOZAKI-Shota/hic4tres">GitHub / README</a></p>
+  <p>立方体は、入力欄以外の場所をドラッグすると中心を軸に回せます。離すと惰性でしばらく回ります。</p>
+  <p id="build-note">このページはViteでビルドして使います。<code>pnpm example:build</code>を実行して<code>examples/dist/</code>を開くか、<code>pnpm example</code>で開発サーバーを起動してください。</p>
+
+  <h2>立方体</h2>
+  <p>各面は本物のDOMです。フォームに入力したり、ボタンを押したりできます。</p>
+  <div id="cube"></div>
+
+  <h2>立方体（WebGPU）</h2>
+  <p>同じ立方体をWebGPURendererで描いたものです。</p>
+  <div id="cube-webgpu"></div>
+
+  <h2>立方体（CSS3DRendererフォールバック）</h2>
+  <p>HTML-in-Canvasに対応していないブラウザ向けのフォールバックで描いたものです。面はCSSの3D変形でcanvasに重ねたDOMなので、ライティングや遮蔽は効きません。非対応ブラウザでは、上の2つも自動でこの表示になります。</p>
+  <div id="cube-css3d"></div>
+
+  <h2>遮蔽</h2>
+  <p>柱に隠れた部分を押しても、ボタンや入力欄は反応しません。ボタンを押している間は面が黄色に、柱を押している間は柱が黒になります。</p>
+  <div id="occlusion"></div>
+
+  <h2>THREE.HTMLTextureとの比較</h2>
+  <p>左はthree.js r187のHTMLTexture、右はhic4tresです。HTMLTextureは正式版のAPIに対応していないため、真っ黒になります。</p>
+  <div id="compare"></div>
+
+  <h2>素直に転送したときの問題</h2>
+  <p>1は上下が逆さまで色が薄く、2は上下を直しても色が薄いままです。3のhic4tresはDOMと同じ色になります。右下の四角はthreeが描いた#0038ffの色見本です。</p>
+  <div id="pitfalls"></div>
+
+  <h2>TresJS + Vue</h2>
+  <p>Vueのフォームを貼った立方体です。入力した名前が右面にリアクティブに表示されます。</p>
+  <div id="tres" class="tres"></div>
+
+  <h2>TresJS + Vue（WebGPU）</h2>
+  <div id="tres-webgpu" class="tres"></div>
+
+  <h2>TresJS + Vue（CSS3DRendererフォールバック）</h2>
+  <p>同じVueのフォームを、HTML-in-Canvas非対応ブラウザ向けのフォールバックで描いたものです。</p>
+  <div id="tres-css3d" class="tres"></div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

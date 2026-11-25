@@ -1,0 +1,13 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>hic4tres – pitfalls</title>
+<link rel="stylesheet" href="./shared.css">
+<div id="root"></div>
+<script type="importmap">
+  { "imports": { "three": "../node_modules/three/build/three.module.js", "three/addons/": "../node_modules/three/examples/jsm/", "hic4tres": "../dist/index.js" } }
+</script>
+<script type="module">
+  import { mountPitfalls } from './demos/pitfalls.js'
+
+  mountPitfalls(document.getElementById('root'))
+</script>

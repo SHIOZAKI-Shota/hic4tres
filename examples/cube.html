@@ -1,0 +1,25 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>hic4tres – cube</title>
+<link rel="stylesheet" href="./shared.css">
+<div id="root"></div>
+<script type="importmap">
+  { "imports": {
+    "three": "../node_modules/three/build/three.module.js",
+    "three/webgpu": "../node_modules/three/build/three.webgpu.js",
+    "three/addons/": "../node_modules/three/examples/jsm/",
+    "hic4tres": "../dist/index.js"
+  } }
+</script>
+<script type="module">
+  import { mountCube } from './demos/cube.js'
+
+  const params = new URLSearchParams(location.search)
+  const demo = await mountCube(document.getElementById('root'), {
+    webgpu: params.get('renderer') === 'webgpu',
+    still: params.has('still'),
+    css3d: params.has('css3d')
+  })
+
+  if (demo) Object.assign(window, { __cube: demo.cube, __demo: demo.demo, __hic: demo.hic })
+</script>
