@@ -1,70 +1,81 @@
 {
-  "name": "hic4tres",
-  "version": "0.1.0",
-  "description": "HTML-in-Canvas for three.js and TresJS: live, interactive DOM as WebGL textures with hit-testing kept in sync.",
-  "license": "MIT",
-  "author": "SHIOZAKI Shota",
-  "type": "module",
-  "sideEffects": false,
-  "keywords": [
-    "three",
-    "threejs",
-    "tresjs",
-    "vue",
-    "html-in-canvas",
-    "webgl",
-    "texture"
-  ],
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    },
-    "./vue": {
-      "types": "./dist/vue.d.ts",
-      "import": "./dist/vue.js"
-    }
-  },
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit",
-    "prepare": "tsup",
-    "example": "vite --config examples/vite.config.ts",
-    "example:build": "vite build --config examples/vite.config.ts",
-    "example:tres": "vite --config examples/tres/vite.config.ts",
-    "example:tres:build": "vite build --config examples/tres/vite.config.ts",
-    "screenshots": "pnpm build && pnpm example:tres:build && node scripts/screenshots.mjs"
-  },
-  "peerDependencies": {
-    "@tresjs/core": "^5.0.0",
-    "three": ">=0.184.0",
-    "vue": "^3.5.0"
-  },
-  "peerDependenciesMeta": {
-    "@tresjs/core": {
-      "optional": true
-    },
-    "vue": {
-      "optional": true
-    }
-  },
-  "devDependencies": {
-    "@tresjs/core": "^5.12.0",
-    "@types/three": "0.187.0",
-    "@vitejs/plugin-vue": "^6.0.11",
-    "puppeteer-core": "^24.43.1",
-    "three": "0.187.0",
-    "tsup": "^9.0.0",
-    "typescript": "^6.0.3",
-    "vite": "^8.3.8",
-    "vitest": "^5.1.1",
-    "vue": "^3.5.46"
-  }
+	"name": "hic4tres",
+	"version": "0.1.1",
+	"description": "HTML-in-Canvas for three.js and TresJS: live, interactive DOM as WebGL textures with hit-testing kept in sync.",
+	"license": "MIT",
+	"author": "SHIOZAKI Shota",
+	"type": "module",
+	"sideEffects": false,
+	"keywords": [
+		"three",
+		"threejs",
+		"tresjs",
+		"vue",
+		"html-in-canvas",
+		"webgl",
+		"texture"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./vue": {
+			"types": "./dist/vue.d.ts",
+			"import": "./dist/vue.js"
+		}
+	},
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"test": "vitest run",
+		"typecheck": "tsc --noEmit",
+		"lint": "oxlint",
+		"fmt": "oxfmt",
+		"fmt:check": "oxfmt --check",
+		"prepublishOnly": "pnpm lint && pnpm fmt:check && pnpm typecheck && pnpm test && pnpm build",
+		"example": "vite --config examples/vite.config.ts",
+		"example:build": "vite build --config examples/vite.config.ts",
+		"example:tres": "vite --config examples/tres/vite.config.ts",
+		"example:tres:build": "vite build --config examples/tres/vite.config.ts",
+		"screenshots": "pnpm build && pnpm example:tres:build && node scripts/screenshots.mjs"
+	},
+	"peerDependencies": {
+		"@tresjs/core": "^5.0.0",
+		"three": ">=0.184.0",
+		"vue": "^3.5.0"
+	},
+	"peerDependenciesMeta": {
+		"@tresjs/core": {
+			"optional": true
+		},
+		"vue": {
+			"optional": true
+		}
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/shiozaki-shota/hic4tres.git"
+	},
+	"homepage": "https://github.com/shiozaki-shota/hic4tres",
+	"bugs": "https://github.com/shiozaki-shota/hic4tres/issues",
+	"devDependencies": {
+		"@tresjs/core": "^5.12.0",
+		"@types/three": "0.187.0",
+		"@vitejs/plugin-vue": "^6.0.11",
+		"oxfmt": "^0.80.0",
+		"oxlint": "^1.95.0",
+		"puppeteer-core": "^24.43.1",
+		"three": "0.187.0",
+		"tsup": "^9.0.0",
+		"typescript": "^6.0.3",
+		"vite": "^8.3.8",
+		"vitest": "^5.1.1",
+		"vue": "^3.5.46"
+	}
 }

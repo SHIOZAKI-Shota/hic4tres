@@ -1,13 +1,19 @@
 <!doctype html>
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <title>hic4tres – vs THREE.HTMLTexture</title>
-<link rel="stylesheet" href="./shared.css">
+<link rel="stylesheet" href="./shared.css" />
 <div id="root"></div>
 <script type="importmap">
-  { "imports": { "three": "../node_modules/three/build/three.module.js", "three/addons/": "../node_modules/three/examples/jsm/", "hic4tres": "../dist/index.js" } }
+	{
+		"imports": {
+			"three": "../node_modules/three/build/three.module.js",
+			"three/addons/": "../node_modules/three/examples/jsm/",
+			"hic4tres": "../dist/index.js"
+		}
+	}
 </script>
 <script type="module">
-  import { mountCompare } from './demos/compare.js'
+	import { mountCompare } from "./demos/compare.js"
 
-  mountCompare(document.getElementById('root'))
+	mountCompare(document.getElementById("root"))
 </script>

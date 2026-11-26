@@ -13,19 +13,19 @@ In Chrome 157+, every example, including the cube below, runs in your browser.
 The faces of this cube are not pictures: they are real DOM. Click "press me" where it is drawn and it is pressed; click the input and you can type. The clock on the right face ticks, and the texture follows the DOM. As the cube turns, faces looking away from the camera stop taking clicks.
 
 ```ts
-import { createHtmlCanvas, supportsHtmlInCanvas } from 'hic4tres'
+import { createHtmlCanvas, supportsHtmlInCanvas } from "hic4tres"
 
 if (supportsHtmlInCanvas()) {
-  const hic = createHtmlCanvas(renderer) // a three.js WebGLRenderer
-  const mesh = new Mesh(new PlaneGeometry(2, 1.25), new MeshBasicMaterial())
-  const layer = hic.add(formElement, { object: mesh })
-  mesh.material.map = layer.texture
+	const hic = createHtmlCanvas(renderer) // a three.js WebGLRenderer
+	const mesh = new Mesh(new PlaneGeometry(2, 1.25), new MeshBasicMaterial())
+	const layer = hic.add(formElement, { object: mesh })
+	mesh.material.map = layer.texture
 
-  renderer.setAnimationLoop(() => {
-    mesh.visible = layer.ready // hide until the first texture arrives
-    hic.update(camera) // keep hit-testing where the plane is drawn
-    renderer.render(scene, camera)
-  })
+	renderer.setAnimationLoop(() => {
+		mesh.visible = layer.ready // hide until the first texture arrives
+		hic.update(camera) // keep hit-testing where the plane is drawn
+		renderer.render(scene, camera)
+	})
 }
 ```
 
@@ -59,7 +59,7 @@ three.js has an `HTMLTexture` for this since r184, but as of r187 it targets the
 
 ![The same element drawn with THREE.HTMLTexture and with hic4tres: black on the left, correct on the right](./docs/images/compare-htmltexture.png)
 
-*Same cube, same elements: three.js r187 `HTMLTexture` on the left, hic4tres on the right (Chrome 159, WebGL).*
+_Same cube, same elements: three.js r187 `HTMLTexture` on the left, hic4tres on the right (Chrome 159, WebGL)._
 
 hic4tres targets the shipped API and handles both the texture upload and the hit-testing.
 
@@ -67,14 +67,14 @@ hic4tres targets the shipped API and handles both the texture upload and the hit
 
 three.js' `CSS3DRenderer` also puts interactive DOM in 3D space, but in a different way: it lays elements over the canvas with CSS 3D transforms, while hic4tres puts the element's image on a mesh as a texture.
 
-| | `CSS3DRenderer` | hic4tres |
-|---|---|---|
-| Where the element lives | A DOM layer separate from the canvas, positioned with CSS 3D transforms | Inside the canvas; its image becomes a mesh texture |
-| Browsers | All major browsers | Chrome / Chromium 157+ |
-| Depth against 3D objects | The whole layer sits in front of or behind the canvas, so out of the box a mesh cannot hide part of an element | Decided by the depth test. A mesh in front hides the element, and clicks on that part go to the canvas |
-| Lighting, materials, post-processing | Do not apply to the element | Apply, since it is an ordinary texture |
-| Resolution | The browser draws it with the transform applied | A texture at the element's drawn size, so a plane shown much larger than that is upscaled and blurs |
-| Planes that always face the camera | `CSS3DSprite` | Not supported |
+|                                      | `CSS3DRenderer`                                                                                                | hic4tres                                                                                               |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Where the element lives              | A DOM layer separate from the canvas, positioned with CSS 3D transforms                                        | Inside the canvas; its image becomes a mesh texture                                                    |
+| Browsers                             | All major browsers                                                                                             | Chrome / Chromium 157+                                                                                 |
+| Depth against 3D objects             | The whole layer sits in front of or behind the canvas, so out of the box a mesh cannot hide part of an element | Decided by the depth test. A mesh in front hides the element, and clicks on that part go to the canvas |
+| Lighting, materials, post-processing | Do not apply to the element                                                                                    | Apply, since it is an ordinary texture                                                                 |
+| Resolution                           | The browser draws it with the transform applied                                                                | A texture at the element's drawn size, so a plane shown much larger than that is upscaled and blurs    |
+| Planes that always face the camera   | `CSS3DSprite`                                                                                                  | Not supported                                                                                          |
 
 If it must run in every browser, or the UI just floats in space without overlapping 3D objects, `CSS3DRenderer` is enough. Use hic4tres when elements should be hidden behind 3D objects, or when lighting and post-processing should affect them too. In browsers without HTML-in-Canvas, hic4tres can also switch to `CSS3DRenderer` ([fallback](#fallback-for-other-browsers)).
 
@@ -92,12 +92,12 @@ If it must run in every browser, or the UI just floats in space without overlapp
 
 ## Requirements
 
-| | |
-|---|---|
-| Browser | Chrome / Chromium 157+ (shipped HTML-in-Canvas; verified in Chrome 159) |
-| three | 0.184+ (uses `ExternalTexture`) |
-| Vue / TresJS | only for `hic4tres/vue`: vue ^3.5, @tresjs/core ^5 |
-| Renderer | `WebGLRenderer`, or `WebGPURenderer` (`three/webgpu`) running on its WebGPU backend |
+|              |                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------- |
+| Browser      | Chrome / Chromium 157+ (shipped HTML-in-Canvas; verified in Chrome 159)             |
+| three        | 0.184+ (uses `ExternalTexture`)                                                     |
+| Vue / TresJS | only for `hic4tres/vue`: vue ^3.5, @tresjs/core ^5                                  |
+| Renderer     | `WebGLRenderer`, or `WebGPURenderer` (`three/webgpu`) running on its WebGPU backend |
 
 In other browsers `supportsHtmlInCanvas()` (or `supportsHtmlInCanvas('webgpu')`) returns `false`. With `fallback: 'css3d'`, those browsers still show the elements with `CSS3DRenderer` ([details](#fallback-for-other-browsers)).
 
@@ -115,16 +115,16 @@ npm i hic4tres three vue @tresjs/core
 ## Usage: three.js
 
 ```ts
-import { Mesh, MeshBasicMaterial, PlaneGeometry } from 'three'
-import { createHtmlCanvas, supportsHtmlInCanvas } from 'hic4tres'
+import { Mesh, MeshBasicMaterial, PlaneGeometry } from "three"
+import { createHtmlCanvas, supportsHtmlInCanvas } from "hic4tres"
 
 const hic = createHtmlCanvas(renderer)
 
 // 1. The element. Give it a width in CSS (it is laid out inside the canvas).
-const card = document.createElement('div')
-card.className = 'card' // e.g. width: 340px
+const card = document.createElement("div")
+card.className = "card" // e.g. width: 340px
 card.innerHTML = '<input placeholder="name"><button>send</button>'
-card.querySelector('button').addEventListener('click', send)
+card.querySelector("button").addEventListener("click", send)
 
 // 2. A plane, and register the element on it. Match the aspect ratio.
 const mesh = new Mesh(new PlaneGeometry(2, 1.25), new MeshBasicMaterial())
@@ -134,9 +134,9 @@ mesh.material.map = layer.texture
 
 // 3. Every frame
 renderer.setAnimationLoop(() => {
-  mesh.visible = layer.ready
-  hic.update(camera)
-  renderer.render(scene, camera)
+	mesh.visible = layer.ready
+	hic.update(camera)
+	renderer.render(scene, camera)
 })
 ```
 
@@ -152,20 +152,20 @@ Notes:
 Initialise the `WebGPURenderer`, then pass it in; everything else is the same as with WebGL.
 
 ```ts
-import { WebGPURenderer } from 'three/webgpu'
-import { createHtmlCanvas, supportsHtmlInCanvas } from 'hic4tres'
+import { WebGPURenderer } from "three/webgpu"
+import { createHtmlCanvas, supportsHtmlInCanvas } from "hic4tres"
 
-if (supportsHtmlInCanvas('webgpu')) {
-  const renderer = new WebGPURenderer({ canvas, antialias: true })
-  await renderer.init() // the device must exist first
-  const hic = createHtmlCanvas(renderer) // hic.backend === 'webgpu'
-  // add / update exactly as with WebGL
+if (supportsHtmlInCanvas("webgpu")) {
+	const renderer = new WebGPURenderer({ canvas, antialias: true })
+	await renderer.init() // the device must exist first
+	const hic = createHtmlCanvas(renderer) // hic.backend === 'webgpu'
+	// add / update exactly as with WebGL
 }
 ```
 
 ![The same cube drawn with WebGPU](./docs/images/cube-webgpu.png)
 
-*The same cube drawn with WebGPU. The button and input work the same.*
+_The same cube drawn with WebGPU. The button and input work the same._
 
 - Textures are allocated as `rgba8unorm-srgb` and written with `device.queue.drawElementImageToTexture`. Colour and orientation are handled as in the WebGL path.
 - A `WebGPURenderer` running on its WebGL2 fallback (no WebGPU available) is not supported; use `WebGLRenderer` there.
@@ -176,41 +176,41 @@ if (supportsHtmlInCanvas('webgpu')) {
 
 ![A Vue form on a TresJS cube, after typing "Tres" and pressing send](./docs/images/tres.png)
 
-*After typing "Tres" into the drawn input and pressing send. The right face shows the same `name`, reactively.*
+_After typing "Tres" into the drawn input and pressing send. The right face shows the same `name`, reactively._
 
 ```vue
 <!-- App.vue -->
 <script setup lang="ts">
-import { ref } from 'vue'
-import { HicCanvas } from 'hic4tres/vue'
-import Scene from './Scene.vue'
+import { ref } from "vue"
+import { HicCanvas } from "hic4tres/vue"
+import Scene from "./Scene.vue"
 
 const form = ref<HTMLElement | null>(null)
-const name = ref('')
+const name = ref("")
 </script>
 
 <template>
-  <HicCanvas clear-color="#f4f4f4">
-    <!-- 3D, as with TresCanvas -->
-    <Scene :form="form" />
+	<HicCanvas clear-color="#f4f4f4">
+		<!-- 3D, as with TresCanvas -->
+		<Scene :form="form" />
 
-    <!-- HTML, placed inside the <canvas> as drawable children -->
-    <template #html>
-      <form ref="form" class="card" @submit.prevent="send">
-        <input v-model="name">
-        <button>send</button>
-      </form>
-    </template>
-  </HicCanvas>
+		<!-- HTML, placed inside the <canvas> as drawable children -->
+		<template #html>
+			<form ref="form" class="card" @submit.prevent="send">
+				<input v-model="name" />
+				<button>send</button>
+			</form>
+		</template>
+	</HicCanvas>
 </template>
 ```
 
 ```vue
 <!-- Scene.vue (inside HicCanvas) -->
 <script setup lang="ts">
-import { shallowRef } from 'vue'
-import { useHtmlLayer } from 'hic4tres/vue'
-import type { Mesh } from 'three'
+import { shallowRef } from "vue"
+import { useHtmlLayer } from "hic4tres/vue"
+import type { Mesh } from "three"
 
 const props = defineProps<{ form: HTMLElement | null }>()
 const mesh = shallowRef<Mesh>()
@@ -218,11 +218,11 @@ const { texture, ready } = useHtmlLayer(() => props.form, { object: mesh })
 </script>
 
 <template>
-  <TresPerspectiveCamera :position="[0.6, 0.4, 3.6]" :look-at="[0, 0, 0]" />
-  <TresMesh ref="mesh" :visible="ready">
-    <TresPlaneGeometry :args="[2.2, 1.6]" />
-    <TresMeshBasicMaterial :map="texture" />
-  </TresMesh>
+	<TresPerspectiveCamera :position="[0.6, 0.4, 3.6]" :look-at="[0, 0, 0]" />
+	<TresMesh ref="mesh" :visible="ready">
+		<TresPlaneGeometry :args="[2.2, 1.6]" />
+		<TresMeshBasicMaterial :map="texture" />
+	</TresMesh>
 </template>
 ```
 
@@ -235,16 +235,16 @@ For WebGPU, pass a `renderer` function that returns a `WebGPURenderer`. TresJS a
 
 ```vue
 <script setup lang="ts">
-import { toValue } from 'vue'
-import { WebGPURenderer } from 'three/webgpu'
-import type { TresRendererSetupContext } from '@tresjs/core'
+import { toValue } from "vue"
+import { WebGPURenderer } from "three/webgpu"
+import type { TresRendererSetupContext } from "@tresjs/core"
 
 const renderer = (ctx: TresRendererSetupContext) =>
-  new WebGPURenderer({ canvas: toValue(ctx.canvas), antialias: true, alpha: true })
+	new WebGPURenderer({ canvas: toValue(ctx.canvas), antialias: true, alpha: true })
 </script>
 
 <template>
-  <HicCanvas :renderer="renderer">…</HicCanvas>
+	<HicCanvas :renderer="renderer">…</HicCanvas>
 </template>
 ```
 
@@ -256,59 +256,59 @@ The full example is in [`examples/tres`](./examples/tres). It shows one componen
 
 Sets the canvas of `renderer` (a `WebGLRenderer`, or a `WebGPURenderer` after `init()`) to `content="drawable"` and creates an `HtmlCanvas`, which registers elements, uploads their textures and updates hit-testing. Throws where HTML-in-Canvas is not available; with `fallback: 'css3d'` it [shows the elements with CSS3DRenderer](#fallback-for-other-browsers) instead.
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `colorSpace` | `'srgb' \| 'linear'` | `'srgb'` | How textures are stored. Use `'linear'` if you disabled three's colour management |
-| `occlusion` | `boolean \| OcclusionOptions` | `true` | [Occlusion](#occlusion) handling. `false` turns it off |
-| `backfaceHitTest` | `boolean` | `false` | Whether planes seen from behind stay clickable. When `false`, a plane whose front (local +Z) faces away from the camera is taken out of hit-testing |
-| `fallback` | `'css3d'` | — | Where HTML-in-Canvas is not available, show the elements with `CSS3DRenderer` instead of throwing |
-| `forceFallback` | `boolean` | `false` | Use `CSS3DRenderer` even where HTML-in-Canvas is available (for checks and tests) |
+| Option            | Type                          | Default  | Description                                                                                                                                         |
+| ----------------- | ----------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `colorSpace`      | `'srgb' \| 'linear'`          | `'srgb'` | How textures are stored. Use `'linear'` if you disabled three's colour management                                                                   |
+| `occlusion`       | `boolean \| OcclusionOptions` | `true`   | [Occlusion](#occlusion) handling. `false` turns it off                                                                                              |
+| `backfaceHitTest` | `boolean`                     | `false`  | Whether planes seen from behind stay clickable. When `false`, a plane whose front (local +Z) faces away from the camera is taken out of hit-testing |
+| `fallback`        | `'css3d'`                     | —        | Where HTML-in-Canvas is not available, show the elements with `CSS3DRenderer` instead of throwing                                                   |
+| `forceFallback`   | `boolean`                     | `false`  | Use `CSS3DRenderer` even where HTML-in-Canvas is available (for checks and tests)                                                                   |
 
 ### `HtmlCanvas`
 
-| Member | Description |
-|---|---|
-| `canvas` | The `<canvas>` |
-| `backend` | `'webgl'` or `'webgpu'` (how textures are uploaded), or `'css3d'` in fallback |
-| `layers` | The registered `HtmlLayer`s |
+| Member                                                 | Description                                                                                                                                                                                                                                                    |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `canvas`                                               | The `<canvas>`                                                                                                                                                                                                                                                 |
+| `backend`                                              | `'webgl'` or `'webgpu'` (how textures are uploaded), or `'css3d'` in fallback                                                                                                                                                                                  |
+| `layers`                                               | The registered `HtmlLayer`s                                                                                                                                                                                                                                    |
 | `add(element, { object?, width?, height?, onReady? })` | Registers the element as a drawable child and returns an `HtmlLayer`. `width` / `height` are the element's size on the plane, in the object's local units; by default a `PlaneGeometry`'s size, otherwise 1×1. `onReady` is called once after the first upload |
-| `update(camera)` | Call every frame. Updates hit-testing for every layer with an `object`, farthest first (back-facing planes are skipped). Occlusion uses this camera too |
-| `dispose()` | Disposes every layer and removes the listeners |
+| `update(camera)`                                       | Call every frame. Updates hit-testing for every layer with an `object`, farthest first (back-facing planes are skipped). Occlusion uses this camera too                                                                                                        |
+| `dispose()`                                            | Disposes every layer and removes the listeners                                                                                                                                                                                                                 |
 
 ### `HtmlLayer`
 
-| Member | Description |
-|---|---|
-| `element` | The registered element |
-| `texture` | An `ExternalTexture` for a material's `map`, already flipped |
-| `ready` | `true` after the first upload |
-| `object` / `width` / `height` | Can be changed later |
-| `dispose()` | Frees the texture and removes the element from hit-testing (the element itself is not removed) |
+| Member                        | Description                                                                                    |
+| ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| `element`                     | The registered element                                                                         |
+| `texture`                     | An `ExternalTexture` for a material's `map`, already flipped                                   |
+| `ready`                       | `true` after the first upload                                                                  |
+| `object` / `width` / `height` | Can be changed later                                                                           |
+| `dispose()`                   | Frees the texture and removes the element from hit-testing (the element itself is not removed) |
 
 ### `OcclusionOptions`
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `objects` | `() => Object3D[]` | the scene the planes belong to | What can block an element. A smaller list means cheaper raycasts; clicks reach the element even when an object left out is in front |
-| `redispatch` | `boolean` | `true` | Re-send blocked events to the canvas |
-| `onBlocked` | `(event, hit) => void` | — | Called for every blocked event; `hit` is the intersection with the object in front |
+| Option       | Type                   | Default                        | Description                                                                                                                         |
+| ------------ | ---------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `objects`    | `() => Object3D[]`     | the scene the planes belong to | What can block an element. A smaller list means cheaper raycasts; clicks reach the element even when an object left out is in front |
+| `redispatch` | `boolean`              | `true`                         | Re-send blocked events to the canvas                                                                                                |
+| `onBlocked`  | `(event, hit) => void` | —                              | Called for every blocked event; `hit` is the intersection with the object in front                                                  |
 
 ### Matrix and support utilities
 
-| Function | Description |
-|---|---|
-| `supportsHtmlInCanvas(backend = 'webgl')` | Whether HTML-in-Canvas (Chrome 157+) is available; pass `'webgpu'` to check the WebGPU path |
-| `elementToCanvasMatrix(object, camera, plane, element, canvas, target?)` | A 4×4 matrix (three `Matrix4`) from element CSS px (origin top-left) to canvas CSS px. Holds for perspective cameras too |
-| `toDOMMatrix(matrix)` | Converts a `Matrix4` to a `DOMMatrix` for `updateElementGeometry` |
-| `projectPoint(matrix, x, y)` | Maps a point on the element to the canvas with that matrix, including the perspective divide. Useful for tests, or for marking where something is drawn |
+| Function                                                                 | Description                                                                                                                                             |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `supportsHtmlInCanvas(backend = 'webgl')`                                | Whether HTML-in-Canvas (Chrome 157+) is available; pass `'webgpu'` to check the WebGPU path                                                             |
+| `elementToCanvasMatrix(object, camera, plane, element, canvas, target?)` | A 4×4 matrix (three `Matrix4`) from element CSS px (origin top-left) to canvas CSS px. Holds for perspective cameras too                                |
+| `toDOMMatrix(matrix)`                                                    | Converts a `Matrix4` to a `DOMMatrix` for `updateElementGeometry`                                                                                       |
+| `projectPoint(matrix, x, y)`                                             | Maps a point on the element to the canvas with that matrix, including the perspective divide. Useful for tests, or for marking where something is drawn |
 
 ### `hic4tres/vue`
 
-| Export | Description |
-|---|---|
-| `<HicCanvas>` | A wrapper of `<TresCanvas>`. `#default` for 3D, `#html` for DOM placed inside the canvas. `hic-options` passes options to `createHtmlCanvas`. The component ref exposes `hic` |
-| `useHic()` | `ShallowRef<HtmlCanvas \| null>` |
-| `useHtmlLayer(element, { object?, width?, height? })` | `{ layer, texture, ready }`: `layer` is a `ShallowRef<HtmlLayer \| null>`, `texture` and `ready` are reactive. Registers and disposes automatically |
+| Export                                                | Description                                                                                                                                                                   |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<HicCanvas>`                                         | A wrapper of `<TresCanvas>`. `#default` for 3D, `#html` for DOM placed inside the canvas. `hic-options` passes options to `createHtmlCanvas`. The component ref exposes `hic` |
+| `useHic()`                                            | `ShallowRef<HtmlCanvas \| null>`                                                                                                                                              |
+| `useHtmlLayer(element, { object?, width?, height? })` | `{ layer, texture, ready }`: `layer` is a `ShallowRef<HtmlLayer \| null>`, `texture` and `ready` are reactive. Registers and disposes automatically                           |
 
 Everything from the core entry is re-exported from `hic4tres/vue` as well.
 
@@ -316,7 +316,7 @@ Everything from the core entry is re-exported from `hic4tres/vue` as well.
 
 ![A straightforward upload is upside down and washed out; flipping fixes the orientation but not the colour; hic4tres matches the DOM](./docs/images/pitfalls.png)
 
-*The small square at the bottom right of each is `#0038ff` drawn by three, for comparison.*
+_The small square at the bottom right of each is `#0038ff` drawn by three, for comparison._
 
 1. **Upside down**: the element image comes top row first, while in three's UVs v=0 is the bottom edge (on WebGL and WebGPU alike). hic4tres flips V with the texture's `repeat` and `offset`, so the orientation is right on any geometry with three's standard UVs.
 2. **Washed out**: allocated as `RGBA8` (`rgba8unorm` on WebGPU), three's colour management reads the values as linear and encodes them to sRGB again, which brightens them. hic4tres allocates `SRGB8_ALPHA8` (`rgba8unorm-srgb`), so the GPU decodes from sRGB. No need to disable colour management.
@@ -331,7 +331,7 @@ The browser treats the element whose `updateElementGeometry` was called last as 
 
 ![Clicks on A and C, hidden behind a pillar in front of the cube, go to the canvas; B presses the button and D focuses the input](./docs/images/occlusion.png)
 
-*A pillar in front of the cube's front face, and the results of clicking A–D.*
+_A pillar in front of the cube's front face, and the results of clicking A–D._
 
 The browser decides where a click goes from the element positions alone, without regard to three's meshes, so without help a button behind a pillar can still be pressed.
 
@@ -344,27 +344,27 @@ hic4tres raycasts at the pointer just before an event reaches an element (in the
 
 ## Scope and limitations
 
-| | Status |
-|---|---|
-| Flat planes in 3D (any position, rotation, scale) | ✅ verified in Chrome 159, including perspective and overlap |
-| Shapes made of planes, like a cube (one element per face) | ✅ faces looking away are taken out of hit-testing |
-| Orthographic "2D" scenes (UI inside a canvas) | ✅ |
-| Vanilla three.js | ✅ `hic4tres` |
-| TresJS / Vue | ✅ `hic4tres/vue`, verified in Chrome 159 |
-| Occlusion by ordinary meshes in front | ✅ verified in Chrome 159 |
-| Curved surfaces (sphere, cylinder…) | draws fine, but **clicks do not line up**: the browser takes one matrix per element, which can only describe a plane (split into one element per flat face, as on the cube) |
-| `Sprite` (billboards) | not yet (facing the camera happens on the GPU, not in `matrixWorld`) |
-| HTML planes intersecting each other | ordered by the distance of their origins; per-pixel order where they cross is not resolved |
-| Cursor and `:hover` of an occluded element | ✅ cleared while the pointer rests on the object in front |
-| WebGPU renderer | ✅ verified in Chrome 159 (AMD GPU); not on the WebGL2 fallback |
-| Browsers without HTML-in-Canvas | `fallback: 'css3d'` switches to CSS3DRenderer (three.js and TresJS / Vue) |
+|                                                           | Status                                                                                                                                                                      |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Flat planes in 3D (any position, rotation, scale)         | ✅ verified in Chrome 159, including perspective and overlap                                                                                                                |
+| Shapes made of planes, like a cube (one element per face) | ✅ faces looking away are taken out of hit-testing                                                                                                                          |
+| Orthographic "2D" scenes (UI inside a canvas)             | ✅                                                                                                                                                                          |
+| Vanilla three.js                                          | ✅ `hic4tres`                                                                                                                                                               |
+| TresJS / Vue                                              | ✅ `hic4tres/vue`, verified in Chrome 159                                                                                                                                   |
+| Occlusion by ordinary meshes in front                     | ✅ verified in Chrome 159                                                                                                                                                   |
+| Curved surfaces (sphere, cylinder…)                       | draws fine, but **clicks do not line up**: the browser takes one matrix per element, which can only describe a plane (split into one element per flat face, as on the cube) |
+| `Sprite` (billboards)                                     | not yet (facing the camera happens on the GPU, not in `matrixWorld`)                                                                                                        |
+| HTML planes intersecting each other                       | ordered by the distance of their origins; per-pixel order where they cross is not resolved                                                                                  |
+| Cursor and `:hover` of an occluded element                | ✅ cleared while the pointer rests on the object in front                                                                                                                   |
+| WebGPU renderer                                           | ✅ verified in Chrome 159 (AMD GPU); not on the WebGL2 fallback                                                                                                             |
+| Browsers without HTML-in-Canvas                           | `fallback: 'css3d'` switches to CSS3DRenderer (three.js and TresJS / Vue)                                                                                                   |
 
 ## Fallback for other browsers
 
 For now HTML-in-Canvas is Chromium-only. With `fallback: 'css3d'`, other browsers do not throw: the elements are laid over the canvas with three.js' `CSS3DRenderer` instead. `add()` and `update()` are used the same way.
 
 ```ts
-const hic = createHtmlCanvas(renderer, { fallback: 'css3d' })
+const hic = createHtmlCanvas(renderer, { fallback: "css3d" })
 hic.backend // 'webgl' | 'webgpu', or 'css3d' in other browsers
 ```
 

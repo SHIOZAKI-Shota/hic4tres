@@ -13,48 +13,48 @@ Chrome 157以降で開くと、下の立方体を含むすべての例をブラ�
 この立方体の各面は画像ではなく、本物のDOMです。前面の「press me」は描かれている位置をクリックすれば押せ、入力欄には文字を打てます。右面の時計はDOMの更新に合わせてテクスチャも進みます。立方体を回すと、裏を向いた面はクリックの対象から外れます。
 
 ```ts
-import { createHtmlCanvas, supportsHtmlInCanvas } from 'hic4tres'
+import { createHtmlCanvas, supportsHtmlInCanvas } from "hic4tres"
 
 if (supportsHtmlInCanvas()) {
-  const hic = createHtmlCanvas(renderer) // three.jsのWebGLRenderer
-  const mesh = new Mesh(new PlaneGeometry(2, 1.25), new MeshBasicMaterial())
-  const layer = hic.add(formElement, { object: mesh })
-  mesh.material.map = layer.texture
+	const hic = createHtmlCanvas(renderer) // three.jsのWebGLRenderer
+	const mesh = new Mesh(new PlaneGeometry(2, 1.25), new MeshBasicMaterial())
+	const layer = hic.add(formElement, { object: mesh })
+	mesh.material.map = layer.texture
 
-  renderer.setAnimationLoop(() => {
-    mesh.visible = layer.ready // 最初のテクスチャが届くまでは隠す
-    hic.update(camera) // クリック判定を板の位置に合わせる
-    renderer.render(scene, camera)
-  })
+	renderer.setAnimationLoop(() => {
+		mesh.visible = layer.ready // 最初のテクスチャが届くまでは隠す
+		hic.update(camera) // クリック判定を板の位置に合わせる
+		renderer.render(scene, camera)
+	})
 }
 ```
 
 ## 目次
 
 - [hic4tres](#hic4tres)
-  - [目次](#目次)
-  - [解決する問題](#解決する問題)
-  - [CSS3DRendererとの違い](#css3drendererとの違い)
-  - [できること](#できること)
-  - [動作環境](#動作環境)
-  - [インストール](#インストール)
-  - [使い方: three.js](#使い方-threejs)
-  - [使い方: WebGPU](#使い方-webgpu)
-  - [使い方: TresJS / Vue](#使い方-tresjs--vue)
-  - [API](#api)
-    - [`createHtmlCanvas(renderer, options?) → HtmlCanvas`](#createhtmlcanvasrenderer-options--htmlcanvas)
-    - [`HtmlCanvas`](#htmlcanvas)
-    - [`HtmlLayer`](#htmllayer)
-    - [`OcclusionOptions`](#occlusionoptions)
-    - [行列と判定のユーティリティ](#行列と判定のユーティリティ)
-    - [`hic4tres/vue`](#hic4tresvue)
-  - [素直に転送したときに起きること](#素直に転送したときに起きること)
-  - [クリックの扱い](#クリックの扱い)
-    - [重なり順](#重なり順)
-    - [遮蔽](#遮蔽)
-  - [対応範囲と制約](#対応範囲と制約)
-  - [非対応ブラウザへのフォールバック](#非対応ブラウザへのフォールバック)
-  - [ライセンス](#ライセンス)
+    - [目次](#目次)
+    - [解決する問題](#解決する問題)
+    - [CSS3DRendererとの違い](#css3drendererとの違い)
+    - [できること](#できること)
+    - [動作環境](#動作環境)
+    - [インストール](#インストール)
+    - [使い方: three.js](#使い方-threejs)
+    - [使い方: WebGPU](#使い方-webgpu)
+    - [使い方: TresJS / Vue](#使い方-tresjs--vue)
+    - [API](#api)
+        - [`createHtmlCanvas(renderer, options?) → HtmlCanvas`](#createhtmlcanvasrenderer-options--htmlcanvas)
+        - [`HtmlCanvas`](#htmlcanvas)
+        - [`HtmlLayer`](#htmllayer)
+        - [`OcclusionOptions`](#occlusionoptions)
+        - [行列と判定のユーティリティ](#行列と判定のユーティリティ)
+        - [`hic4tres/vue`](#hic4tresvue)
+    - [素直に転送したときに起きること](#素直に転送したときに起きること)
+    - [クリックの扱い](#クリックの扱い)
+        - [重なり順](#重なり順)
+        - [遮蔽](#遮蔽)
+    - [対応範囲と制約](#対応範囲と制約)
+    - [非対応ブラウザへのフォールバック](#非対応ブラウザへのフォールバック)
+    - [ライセンス](#ライセンス)
 
 ## 解決する問題
 
@@ -69,7 +69,7 @@ if (supportsHtmlInCanvas()) {
 
 ![同じ要素をTHREE.HTMLTextureとhic4tresで描いた比較。左は真っ黒、右は正しく描かれている](./docs/images/compare-htmltexture.png)
 
-*同じ立方体・同じ要素を、左はthree.js r187の`HTMLTexture`、右はhic4tresで描いたもの（Chrome 159、WebGL）。*
+_同じ立方体・同じ要素を、左はthree.js r187の`HTMLTexture`、右はhic4tresで描いたもの（Chrome 159、WebGL）。_
 
 hic4tresは正式版のAPIを対象にし、要素の画像の転送とクリック判定の位置合わせをまとめて行います。
 
@@ -77,14 +77,14 @@ hic4tresは正式版のAPIを対象にし、要素の画像の転送とクリッ
 
 three.jsの`CSS3DRenderer`も、DOMを3D空間に置いて操作できるようにします。ただし仕組みが異なります。`CSS3DRenderer`は要素をCSSの3D変形でcanvasに重ね、hic4tresは要素の画像をテクスチャとしてメッシュに貼ります。
 
-| | `CSS3DRenderer` | hic4tres |
-|---|---|---|
-| 要素の置き場所 | canvasとは別のDOMのレイヤー。CSSの3D変形で位置を合わせる | canvasの中。要素の画像をメッシュのテクスチャにする |
-| 対応ブラウザ | 主要ブラウザすべて | Chrome / Chromium 157以降 |
-| 3Dの物体との前後関係 | レイヤーごとcanvasの手前か奥に置かれるので、そのままではメッシュが要素の一部を隠せない | 深度テストで前後が決まる。手前のメッシュは要素を隠し、その部分のクリックもcanvasに回る |
-| ライティング、マテリアル、ポストエフェクト | 要素には効かない | 普通のテクスチャとして使えるので効く |
-| 表示の解像度 | ブラウザが変形込みで描く | 要素の描画サイズのテクスチャを貼るので、板を大きく映すと拡大されてぼやける |
-| 常にカメラを向く板 | `CSS3DSprite`がある | 未対応 |
+|                                            | `CSS3DRenderer`                                                                        | hic4tres                                                                               |
+| ------------------------------------------ | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| 要素の置き場所                             | canvasとは別のDOMのレイヤー。CSSの3D変形で位置を合わせる                               | canvasの中。要素の画像をメッシュのテクスチャにする                                     |
+| 対応ブラウザ                               | 主要ブラウザすべて                                                                     | Chrome / Chromium 157以降                                                              |
+| 3Dの物体との前後関係                       | レイヤーごとcanvasの手前か奥に置かれるので、そのままではメッシュが要素の一部を隠せない | 深度テストで前後が決まる。手前のメッシュは要素を隠し、その部分のクリックもcanvasに回る |
+| ライティング、マテリアル、ポストエフェクト | 要素には効かない                                                                       | 普通のテクスチャとして使えるので効く                                                   |
+| 表示の解像度                               | ブラウザが変形込みで描く                                                               | 要素の描画サイズのテクスチャを貼るので、板を大きく映すと拡大されてぼやける             |
+| 常にカメラを向く板                         | `CSS3DSprite`がある                                                                    | 未対応                                                                                 |
 
 全ブラウザで動かしたい場合や、3Dの物体と重ならないUIを空間に浮かべるだけの場合は`CSS3DRenderer`で足ります。要素を3Dの物体の後ろに隠したい場合や、光や後処理の効果を要素にもかけたい場合はhic4tresを使います。hic4tresは、HTML-in-Canvasに対応していないブラウザでは`CSS3DRenderer`での表示に切り替えることもできます（[フォールバック](#非対応ブラウザへのフォールバック)）。
 
@@ -102,12 +102,12 @@ three.jsの`CSS3DRenderer`も、DOMを3D空間に置いて操作できるよう�
 
 ## 動作環境
 
-| | |
-|---|---|
-| ブラウザ | Chrome / Chromium 157以降（HTML-in-Canvasの正式版。動作確認はChrome 159） |
-| three | 0.184以上（`ExternalTexture`を使用） |
-| Vue / TresJS | `hic4tres/vue`を使う場合のみ: vue ^3.5、@tresjs/core ^5 |
-| レンダラー | `WebGLRenderer`、または`WebGPURenderer`（`three/webgpu`。WebGPUバックエンドで動いているとき） |
+|              |                                                                                               |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| ブラウザ     | Chrome / Chromium 157以降（HTML-in-Canvasの正式版。動作確認はChrome 159）                     |
+| three        | 0.184以上（`ExternalTexture`を使用）                                                          |
+| Vue / TresJS | `hic4tres/vue`を使う場合のみ: vue ^3.5、@tresjs/core ^5                                       |
+| レンダラー   | `WebGLRenderer`、または`WebGPURenderer`（`three/webgpu`。WebGPUバックエンドで動いているとき） |
 
 非対応ブラウザでは`supportsHtmlInCanvas()`（WebGPUなら`supportsHtmlInCanvas('webgpu')`）が`false`を返します。`fallback: 'css3d'`を指定すれば、非対応ブラウザでも`CSS3DRenderer`で表示できます（[詳しく](#非対応ブラウザへのフォールバック)）。
 
@@ -125,16 +125,16 @@ npm i hic4tres three vue @tresjs/core
 ## 使い方: three.js
 
 ```ts
-import { Mesh, MeshBasicMaterial, PlaneGeometry } from 'three'
-import { createHtmlCanvas, supportsHtmlInCanvas } from 'hic4tres'
+import { Mesh, MeshBasicMaterial, PlaneGeometry } from "three"
+import { createHtmlCanvas, supportsHtmlInCanvas } from "hic4tres"
 
 const hic = createHtmlCanvas(renderer)
 
 // 1. 要素を用意する。幅はCSSで決めておく(canvasの中でレイアウトされる)
-const card = document.createElement('div')
-card.className = 'card' // 例: width: 340px
+const card = document.createElement("div")
+card.className = "card" // 例: width: 340px
 card.innerHTML = '<input placeholder="name"><button>send</button>'
-card.querySelector('button').addEventListener('click', send)
+card.querySelector("button").addEventListener("click", send)
 
 // 2. 板を作り、要素を登録する。縦横比は要素に合わせる
 const mesh = new Mesh(new PlaneGeometry(2, 1.25), new MeshBasicMaterial())
@@ -144,9 +144,9 @@ mesh.material.map = layer.texture
 
 // 3. 毎フレーム
 renderer.setAnimationLoop(() => {
-  mesh.visible = layer.ready
-  hic.update(camera)
-  renderer.render(scene, camera)
+	mesh.visible = layer.ready
+	hic.update(camera)
+	renderer.render(scene, camera)
 })
 ```
 
@@ -162,20 +162,20 @@ renderer.setAnimationLoop(() => {
 `WebGPURenderer`を初期化してから渡すだけで、残りはWebGLと同じです。
 
 ```ts
-import { WebGPURenderer } from 'three/webgpu'
-import { createHtmlCanvas, supportsHtmlInCanvas } from 'hic4tres'
+import { WebGPURenderer } from "three/webgpu"
+import { createHtmlCanvas, supportsHtmlInCanvas } from "hic4tres"
 
-if (supportsHtmlInCanvas('webgpu')) {
-  const renderer = new WebGPURenderer({ canvas, antialias: true })
-  await renderer.init() // デバイスができてから
-  const hic = createHtmlCanvas(renderer) // hic.backend === 'webgpu'
-  // 以降のadd / updateはWebGLと同じ
+if (supportsHtmlInCanvas("webgpu")) {
+	const renderer = new WebGPURenderer({ canvas, antialias: true })
+	await renderer.init() // デバイスができてから
+	const hic = createHtmlCanvas(renderer) // hic.backend === 'webgpu'
+	// 以降のadd / updateはWebGLと同じ
 }
 ```
 
 ![WebGPUで描いた同じ立方体](./docs/images/cube-webgpu.png)
 
-*同じ立方体をWebGPUで描いたもの。ボタンと入力欄も同じように操作できます。*
+_同じ立方体をWebGPUで描いたもの。ボタンと入力欄も同じように操作できます。_
 
 - テクスチャは`rgba8unorm-srgb`で確保し、`device.queue.drawElementImageToTexture`で書き込みます。色と上下の向きの扱いはWebGL版と同じです。
 - `WebGPURenderer`がWebGL2のフォールバックで動いている場合（WebGPUが使えない環境）は対象外です。その場合は`WebGLRenderer`を使ってください。
@@ -186,41 +186,41 @@ if (supportsHtmlInCanvas('webgpu')) {
 
 ![TresJSの立方体に貼ったVueのフォーム。入力欄にTresと打って送信した状態](./docs/images/tres.png)
 
-*描かれた入力欄に「Tres」と打って送信した状態。右面には同じ`name`がリアクティブに表示されています。*
+_描かれた入力欄に「Tres」と打って送信した状態。右面には同じ`name`がリアクティブに表示されています。_
 
 ```vue
 <!-- App.vue -->
 <script setup lang="ts">
-import { ref } from 'vue'
-import { HicCanvas } from 'hic4tres/vue'
-import Scene from './Scene.vue'
+import { ref } from "vue"
+import { HicCanvas } from "hic4tres/vue"
+import Scene from "./Scene.vue"
 
 const form = ref<HTMLElement | null>(null)
-const name = ref('')
+const name = ref("")
 </script>
 
 <template>
-  <HicCanvas clear-color="#f4f4f4">
-    <!-- 3D: TresCanvasと同じ -->
-    <Scene :form="form" />
+	<HicCanvas clear-color="#f4f4f4">
+		<!-- 3D: TresCanvasと同じ -->
+		<Scene :form="form" />
 
-    <!-- HTML: canvasの中へdrawableな子として置かれる -->
-    <template #html>
-      <form ref="form" class="card" @submit.prevent="send">
-        <input v-model="name">
-        <button>send</button>
-      </form>
-    </template>
-  </HicCanvas>
+		<!-- HTML: canvasの中へdrawableな子として置かれる -->
+		<template #html>
+			<form ref="form" class="card" @submit.prevent="send">
+				<input v-model="name" />
+				<button>send</button>
+			</form>
+		</template>
+	</HicCanvas>
 </template>
 ```
 
 ```vue
 <!-- Scene.vue (HicCanvasの中) -->
 <script setup lang="ts">
-import { shallowRef } from 'vue'
-import { useHtmlLayer } from 'hic4tres/vue'
-import type { Mesh } from 'three'
+import { shallowRef } from "vue"
+import { useHtmlLayer } from "hic4tres/vue"
+import type { Mesh } from "three"
 
 const props = defineProps<{ form: HTMLElement | null }>()
 const mesh = shallowRef<Mesh>()
@@ -228,11 +228,11 @@ const { texture, ready } = useHtmlLayer(() => props.form, { object: mesh })
 </script>
 
 <template>
-  <TresPerspectiveCamera :position="[0.6, 0.4, 3.6]" :look-at="[0, 0, 0]" />
-  <TresMesh ref="mesh" :visible="ready">
-    <TresPlaneGeometry :args="[2.2, 1.6]" />
-    <TresMeshBasicMaterial :map="texture" />
-  </TresMesh>
+	<TresPerspectiveCamera :position="[0.6, 0.4, 3.6]" :look-at="[0, 0, 0]" />
+	<TresMesh ref="mesh" :visible="ready">
+		<TresPlaneGeometry :args="[2.2, 1.6]" />
+		<TresMeshBasicMaterial :map="texture" />
+	</TresMesh>
 </template>
 ```
 
@@ -245,16 +245,16 @@ WebGPUで動かすときは、`renderer`に`WebGPURenderer`を返す関数を渡
 
 ```vue
 <script setup lang="ts">
-import { toValue } from 'vue'
-import { WebGPURenderer } from 'three/webgpu'
-import type { TresRendererSetupContext } from '@tresjs/core'
+import { toValue } from "vue"
+import { WebGPURenderer } from "three/webgpu"
+import type { TresRendererSetupContext } from "@tresjs/core"
 
 const renderer = (ctx: TresRendererSetupContext) =>
-  new WebGPURenderer({ canvas: toValue(ctx.canvas), antialias: true, alpha: true })
+	new WebGPURenderer({ canvas: toValue(ctx.canvas), antialias: true, alpha: true })
 </script>
 
 <template>
-  <HicCanvas :renderer="renderer">…</HicCanvas>
+	<HicCanvas :renderer="renderer">…</HicCanvas>
 </template>
 ```
 
@@ -266,59 +266,59 @@ const renderer = (ctx: TresRendererSetupContext) =>
 
 `renderer`（`WebGLRenderer`、または`init()`済みの`WebGPURenderer`）のcanvasを`content="drawable"`にし、要素の登録、テクスチャの転送、クリック判定の更新を行う`HtmlCanvas`を作ります。非対応の環境では例外を投げます。`fallback: 'css3d'`を指定すれば、代わりに[CSS3DRendererで表示](#非対応ブラウザへのフォールバック)します。
 
-| オプション | 型 | 初期値 | 説明 |
-|---|---|---|---|
-| `colorSpace` | `'srgb' \| 'linear'` | `'srgb'` | テクスチャの保存形式。threeの色管理を切っている場合は`'linear'` |
-| `occlusion` | `boolean \| OcclusionOptions` | `true` | [遮蔽](#遮蔽)の判定。`false`で無効 |
-| `backfaceHitTest` | `boolean` | `false` | 裏を向いた板もクリックできるようにするか。`false`のときは、板の表（ローカル+Z）がカメラと反対を向くとクリック判定から外す |
-| `fallback` | `'css3d'` | — | HTML-in-Canvasが使えないとき、例外を投げずに`CSS3DRenderer`で表示する |
-| `forceFallback` | `boolean` | `false` | 対応ブラウザでも`CSS3DRenderer`で表示する（確認・テスト用） |
+| オプション        | 型                            | 初期値   | 説明                                                                                                                      |
+| ----------------- | ----------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `colorSpace`      | `'srgb' \| 'linear'`          | `'srgb'` | テクスチャの保存形式。threeの色管理を切っている場合は`'linear'`                                                           |
+| `occlusion`       | `boolean \| OcclusionOptions` | `true`   | [遮蔽](#遮蔽)の判定。`false`で無効                                                                                        |
+| `backfaceHitTest` | `boolean`                     | `false`  | 裏を向いた板もクリックできるようにするか。`false`のときは、板の表（ローカル+Z）がカメラと反対を向くとクリック判定から外す |
+| `fallback`        | `'css3d'`                     | —        | HTML-in-Canvasが使えないとき、例外を投げずに`CSS3DRenderer`で表示する                                                     |
+| `forceFallback`   | `boolean`                     | `false`  | 対応ブラウザでも`CSS3DRenderer`で表示する（確認・テスト用）                                                               |
 
 ### `HtmlCanvas`
 
-| メンバー | 説明 |
-|---|---|
-| `canvas` | 対象の`<canvas>` |
-| `backend` | `'webgl'`か`'webgpu'`（テクスチャの転送に使っている方式）、またはフォールバック時の`'css3d'` |
-| `layers` | 登録中の`HtmlLayer`の集合 |
+| メンバー                                               | 説明                                                                                                                                                                                                                                    |
+| ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `canvas`                                               | 対象の`<canvas>`                                                                                                                                                                                                                        |
+| `backend`                                              | `'webgl'`か`'webgpu'`（テクスチャの転送に使っている方式）、またはフォールバック時の`'css3d'`                                                                                                                                            |
+| `layers`                                               | 登録中の`HtmlLayer`の集合                                                                                                                                                                                                               |
 | `add(element, { object?, width?, height?, onReady? })` | 要素をdrawableな子として登録し、`HtmlLayer`を返す。`width` / `height`は板の上での要素の大きさ（`object`のローカル単位）。省略時は`object`が`PlaneGeometry`ならその大きさ、それ以外は1×1。`onReady`は最初の転送が済んだときに1回呼ばれる |
-| `update(camera)` | 毎フレーム呼ぶ。`object`を持つ全レイヤーのクリック判定を、カメラから遠い順に更新する（裏を向いた板は外す）。遮蔽の判定にもこのカメラを使う |
-| `dispose()` | すべてのレイヤーとイベントリスナーを片付ける |
+| `update(camera)`                                       | 毎フレーム呼ぶ。`object`を持つ全レイヤーのクリック判定を、カメラから遠い順に更新する（裏を向いた板は外す）。遮蔽の判定にもこのカメラを使う                                                                                              |
+| `dispose()`                                            | すべてのレイヤーとイベントリスナーを片付ける                                                                                                                                                                                            |
 
 ### `HtmlLayer`
 
-| メンバー | 説明 |
-|---|---|
-| `element` | 登録した要素 |
-| `texture` | マテリアルの`map`に使う`ExternalTexture`。上下反転済み |
-| `ready` | 最初の転送が済んだら`true` |
-| `object` / `width` / `height` | 後から変更できる |
-| `dispose()` | テクスチャを破棄し、クリック判定から外す（要素自体は削除しない） |
+| メンバー                      | 説明                                                             |
+| ----------------------------- | ---------------------------------------------------------------- |
+| `element`                     | 登録した要素                                                     |
+| `texture`                     | マテリアルの`map`に使う`ExternalTexture`。上下反転済み           |
+| `ready`                       | 最初の転送が済んだら`true`                                       |
+| `object` / `width` / `height` | 後から変更できる                                                 |
+| `dispose()`                   | テクスチャを破棄し、クリック判定から外す（要素自体は削除しない） |
 
 ### `OcclusionOptions`
 
-| オプション | 型 | 初期値 | 説明 |
-|---|---|---|---|
-| `objects` | `() => Object3D[]` | 板が属するシーン全体 | 遮蔽物になりうる物。範囲を絞るとレイキャストが軽くなる。ここに含めない物が手前にあっても、クリックは要素に届く |
-| `redispatch` | `boolean` | `true` | 遮ったイベントをcanvasに送り直す |
-| `onBlocked` | `(event, hit) => void` | — | 遮ったイベントごとに呼ばれる。`hit`は手前にあった物の交差情報 |
+| オプション   | 型                     | 初期値               | 説明                                                                                                           |
+| ------------ | ---------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `objects`    | `() => Object3D[]`     | 板が属するシーン全体 | 遮蔽物になりうる物。範囲を絞るとレイキャストが軽くなる。ここに含めない物が手前にあっても、クリックは要素に届く |
+| `redispatch` | `boolean`              | `true`               | 遮ったイベントをcanvasに送り直す                                                                               |
+| `onBlocked`  | `(event, hit) => void` | —                    | 遮ったイベントごとに呼ばれる。`hit`は手前にあった物の交差情報                                                  |
 
 ### 行列と判定のユーティリティ
 
-| 関数 | 説明 |
-|---|---|
-| `supportsHtmlInCanvas(backend = 'webgl')` | Chrome 157以降のHTML-in-Canvasが使えるか。`'webgpu'`を渡すとWebGPU版を確認する |
-| `elementToCanvasMatrix(object, camera, plane, element, canvas, target?)` | 要素のCSS px（左上原点）をcanvasのCSS pxに移す4×4行列（threeの`Matrix4`）。透視投影でも成り立つ |
-| `toDOMMatrix(matrix)` | `Matrix4`を`updateElementGeometry`に渡せる`DOMMatrix`に変換する |
-| `projectPoint(matrix, x, y)` | 上の行列で要素上の点をcanvas上の点に移す（透視除算込み）。テストや、描かれた位置に印を付けるときに使う |
+| 関数                                                                     | 説明                                                                                                   |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `supportsHtmlInCanvas(backend = 'webgl')`                                | Chrome 157以降のHTML-in-Canvasが使えるか。`'webgpu'`を渡すとWebGPU版を確認する                         |
+| `elementToCanvasMatrix(object, camera, plane, element, canvas, target?)` | 要素のCSS px（左上原点）をcanvasのCSS pxに移す4×4行列（threeの`Matrix4`）。透視投影でも成り立つ        |
+| `toDOMMatrix(matrix)`                                                    | `Matrix4`を`updateElementGeometry`に渡せる`DOMMatrix`に変換する                                        |
+| `projectPoint(matrix, x, y)`                                             | 上の行列で要素上の点をcanvas上の点に移す（透視除算込み）。テストや、描かれた位置に印を付けるときに使う |
 
 ### `hic4tres/vue`
 
-| エクスポート | 説明 |
-|---|---|
-| `<HicCanvas>` | `<TresCanvas>`のラッパー。`#default`に3D、`#html`にcanvasの中へ置くDOM。`hic-options`で`createHtmlCanvas`のオプションを渡せる。`ref`から`hic`を取れる |
-| `useHic()` | `ShallowRef<HtmlCanvas \| null>` |
-| `useHtmlLayer(element, { object?, width?, height? })` | `{ layer, texture, ready }`。`layer`は`ShallowRef<HtmlLayer \| null>`、`texture`と`ready`はリアクティブ。登録と破棄を自動で行う |
+| エクスポート                                          | 説明                                                                                                                                                  |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `<HicCanvas>`                                         | `<TresCanvas>`のラッパー。`#default`に3D、`#html`にcanvasの中へ置くDOM。`hic-options`で`createHtmlCanvas`のオプションを渡せる。`ref`から`hic`を取れる |
+| `useHic()`                                            | `ShallowRef<HtmlCanvas \| null>`                                                                                                                      |
+| `useHtmlLayer(element, { object?, width?, height? })` | `{ layer, texture, ready }`。`layer`は`ShallowRef<HtmlLayer \| null>`、`texture`と`ready`はリアクティブ。登録と破棄を自動で行う                       |
 
 `hic4tres/vue`からは、コアのエクスポートもすべて使えます。
 
@@ -326,7 +326,7 @@ const renderer = (ctx: TresRendererSetupContext) =>
 
 ![素直に転送すると上下が逆さまで色も薄い。反転しても色は薄いまま。hic4tresはDOMと同じ色](./docs/images/pitfalls.png)
 
-*右下の小さな四角は、threeが`#0038ff`で描いた比較用の色見本です。*
+_右下の小さな四角は、threeが`#0038ff`で描いた比較用の色見本です。_
 
 1. **上下が逆さまになる**: 要素の画像は上の行から順に並びますが、threeのUVではv=0が下端です（WebGLでもWebGPUでも同じ）。hic4tresはテクスチャの`repeat`と`offset`でV方向を反転させます。threeの標準的なUVを持つ形状なら、どれに貼っても向きが合います。
 2. **色が薄くなる**: `RGBA8`（WebGPUでは`rgba8unorm`）で確保すると、threeの色管理がその値をリニアとみなしてsRGBに変換するため、明るくなります。hic4tresは`SRGB8_ALPHA8`（`rgba8unorm-srgb`）で確保し、GPUにsRGBから戻させます。threeの色管理を切る必要はありません。
@@ -341,7 +341,7 @@ const renderer = (ctx: TresRendererSetupContext) =>
 
 ![立方体の前面の手前にある柱に隠れた部分AとCへのクリックはcanvasに回り、見えている部分Bはボタン、Dは入力欄が反応する](./docs/images/occlusion.png)
 
-*立方体の前面の手前に柱を置き、A〜Dをクリックした結果。*
+_立方体の前面の手前に柱を置き、A〜Dをクリックした結果。_
 
 ブラウザは要素の位置だけでクリック先を決めるので、threeのメッシュによる遮りは考慮されません。そのため、何もしないと柱の後ろに隠れたボタンでも押せてしまいます。
 
@@ -354,27 +354,27 @@ hic4tresは、要素にイベントが届く直前（canvasのcapture段階）�
 
 ## 対応範囲と制約
 
-| 項目 | 状態 |
-|---|---|
-| 3D空間の平らな板（位置・回転・拡大縮小は自由） | ✅ Chrome 159で確認（透視投影・重なりを含む） |
-| 立方体のように板を組み合わせた形（面ごとに1要素） | ✅ 裏を向いた面はクリック判定から外す |
-| 正投影の「2D」画面（canvas内のUI） | ✅ |
-| 素のthree.js | ✅ `hic4tres` |
-| TresJS / Vue | ✅ `hic4tres/vue`。Chrome 159で確認 |
-| 手前の普通のメッシュによる遮蔽 | ✅ Chrome 159で確認 |
-| 曲面（球・円柱など）に貼る | 描画はできるが、**クリック位置は合わない**。ブラウザが1要素に受け取れる行列は1つで、平面しか表せないため（立方体のように面ごとに要素を分ければよい） |
-| `Sprite`（常にカメラを向く板） | 未対応（カメラへの向きはGPU側で付くので、`matrixWorld`に現れない） |
-| HTMLの板どうしが交差している場合 | 板の中心の距離で順番を決める。交差した部分のピクセル単位の前後は解決しない |
-| 遮られている要素のカーソルと`:hover` | ✅ ポインタが手前の物体の上にある間は外れる |
-| WebGPUのレンダラー | ✅ Chrome 159（AMDのGPU）で確認。WebGL2フォールバック時は対象外 |
-| 非対応ブラウザ | `fallback: 'css3d'`でCSS3DRendererによる表示に切り替える（three.js、TresJS / Vueとも） |
+| 項目                                              | 状態                                                                                                                                                 |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 3D空間の平らな板（位置・回転・拡大縮小は自由）    | ✅ Chrome 159で確認（透視投影・重なりを含む）                                                                                                        |
+| 立方体のように板を組み合わせた形（面ごとに1要素） | ✅ 裏を向いた面はクリック判定から外す                                                                                                                |
+| 正投影の「2D」画面（canvas内のUI）                | ✅                                                                                                                                                   |
+| 素のthree.js                                      | ✅ `hic4tres`                                                                                                                                        |
+| TresJS / Vue                                      | ✅ `hic4tres/vue`。Chrome 159で確認                                                                                                                  |
+| 手前の普通のメッシュによる遮蔽                    | ✅ Chrome 159で確認                                                                                                                                  |
+| 曲面（球・円柱など）に貼る                        | 描画はできるが、**クリック位置は合わない**。ブラウザが1要素に受け取れる行列は1つで、平面しか表せないため（立方体のように面ごとに要素を分ければよい） |
+| `Sprite`（常にカメラを向く板）                    | 未対応（カメラへの向きはGPU側で付くので、`matrixWorld`に現れない）                                                                                   |
+| HTMLの板どうしが交差している場合                  | 板の中心の距離で順番を決める。交差した部分のピクセル単位の前後は解決しない                                                                           |
+| 遮られている要素のカーソルと`:hover`              | ✅ ポインタが手前の物体の上にある間は外れる                                                                                                          |
+| WebGPUのレンダラー                                | ✅ Chrome 159（AMDのGPU）で確認。WebGL2フォールバック時は対象外                                                                                      |
+| 非対応ブラウザ                                    | `fallback: 'css3d'`でCSS3DRendererによる表示に切り替える（three.js、TresJS / Vueとも）                                                               |
 
 ## 非対応ブラウザへのフォールバック
 
 HTML-in-Canvasが使えるのは今のところChromium系だけです。`fallback: 'css3d'`を指定すると、非対応ブラウザでは例外を投げる代わりに、three.jsの`CSS3DRenderer`で要素をcanvasに重ねて表示します。`add()`と`update()`の使い方は変わりません。
 
 ```ts
-const hic = createHtmlCanvas(renderer, { fallback: 'css3d' })
+const hic = createHtmlCanvas(renderer, { fallback: "css3d" })
 hic.backend // 'webgl' | 'webgpu'、非対応ブラウザでは 'css3d'
 ```
 
